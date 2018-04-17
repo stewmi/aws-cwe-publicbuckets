@@ -1,0 +1,35 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: An Amazon Config trigger that finds open S3 Buckets and logs them to SNS.
+Resources:
+  sduConfigS3:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: open_buckets.lambda_handler
+      Runtime: python2.7
+      CodeUri: .
+      Description: An AWS Config rule that is triggered by S3 Bucket Deployment.
+      MemorySize: 128
+      Timeout: 10
+      Environment:
+        Variables:
+          TOPIC_ARN: !Ref OpenBucketNotifyTopic
+      Policies:
+         - AWSConfigRulesExecutionRole
+         - AmazonS3FullAccess
+         - AmazonSNSFullAccess
+      Events:
+        OpenBucketCloudWatchEvent:
+          Type: CloudWatchEvent
+          Properties:
+            Pattern:
+              source:
+                - aws.config
+              detail-type:
+                - "Config Rules Compliance Change"
+              detail:
+                configRuleName:
+                  - "s3-bucket-public-write-prohibited"
+                  - "s3-bucket-public-read-prohibited"
+  OpenBucketNotifyTopic:
+    Type: 'AWS::SNS::Topic'
