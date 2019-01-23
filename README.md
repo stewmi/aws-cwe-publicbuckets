@@ -1,5 +1,7 @@
 # Open Bucket Compliance Automation
 
+[![Build Status](https://travis-ci.com/stewmi/aws-cwe-publicbuckets.svg?branch=master)](https://travis-ci.com/stewmi/aws-cwe-publicbuckets)
+
 ## Overview
 ### Summary
 
